@@ -1,10 +1,319 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="refresh" content="0; url=https://script.google.com/macros/s/AKfycbxhHu6XdEB04kw_uxz54dSzQ4oVWS5QDi8NnxJGOKOyTfjod5BS3sxiR0D7w5KQtE0znw/exec" />
-    <title>Your Site Name</title>
-  </head>
-  <body>
-    <p>Redirecting to app...</p>
-  </body>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boetepot Heren 8</title>
+    <style>
+        /* Your existing CSS remains unchanged */
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://www.transparenttextures.com/patterns/soccer-ball.png');
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .total {
+            text-align: center;
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .history, .recent-fines, .admin, .all-fines {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        .icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-red {
+            background: #e74c3c;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        select, input {
+            padding: 5px;
+            margin: 5px 0;
+            width: 100%;
+            max-width: 200px;
+        }
+        .search-bar {
+            margin-bottom: 10px;
+        }
+        .search-bar input {
+            width: 100%;
+            max-width: 300px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .pagination-btn {
+            background: #3498db;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        .pagination-btn.active {
+            background: #2c3e50;
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            table {
+                font-size: 14px;
+            }
+            .btn {
+                padding: 8px 16px;
+            }
+            .search-bar input {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Boetepot Heren 8</h1>
+        <div class="total" id="totalFines">Laden...</div>
+
+        <div class="history">
+            <h2>Speler historie</h2>
+            <div class="search-bar">
+                <input type="text" id="playerSearch" placeholder="Zoek speler">
+                <button onclick="searchPlayer()">Zoek</button>
+            </div>
+            <div id="playerHistory"></div>
+            <div id="leaderboard">
+                <h3>Leaderboard (Hoogste boetes)</h3>
+                <ol id="leaderboardList"></ol>
+            </div>
+        </div>
+
+        <div class="recent-fines">
+            <h2>Recente boetes</h2>
+            <table id="recentFinesTable">
+                <tr>
+                    <th>Speler</th>
+                    <th>Datum</th>
+                    <th>Bedrag</th>
+                    <th>Reden</th>
+                </tr>
+            </table>
+        </div>
+
+        <div class="admin">
+            <h2>Admin Dashboard - Boetepot Heren 8</h2>
+            <form id="addFineForm">
+                <label for="player">Speler:</label>
+                <input type="text" id="player" name="player" required>
+                <label for="amount">Bedrag (€):</label>
+                <input type="number" id="amount" name="amount" min="0" step="0.01" required>
+                <label for="reason">Reden:</label>
+                <select id="reason" name="reason"></select>
+                <button type="submit" class="btn">Voeg boete toe</button>
+            </form>
+        </div>
+
+        <div class="all-fines">
+            <h2>Alle boetes</h2>
+            <table id="allFinesTable">
+                <tr>
+                    <th>Speler</th>
+                    <th>Datum</th>
+                    <th>Bedrag</th>
+                    <th>Reden</th>
+                    <th>Actie</th>
+                </tr>
+            </table>
+            <div id="pagination" class="pagination"></div>
+        </div>
+    </div>
+
+    <script>
+        // Replace with your Vercel API domain after deployment (e.g., https://fine-app-backend.vercel.app)
+        const API_BASE_URL = 'http://localhost:3000'; // Use this for local testing; update later
+
+        // Load data on page load
+        window.onload = async () => {
+            await loadTotalFines();
+            await loadRecentFines();
+            await loadLeaderboard();
+            await loadDropdownOptions();
+            await loadAllFines(1); // Load first page
+        };
+
+        // Fetch and display total fines
+        async function loadTotalFines() {
+            const response = await fetch(`${API_BASE_URL}/api/getTotaalBoetes`);
+            const total = await response.json();
+            document.getElementById('totalFines').textContent = `€${total}`;
+        }
+
+        // Fetch and display recent fines
+        async function loadRecentFines() {
+            const response = await fetch(`${API_BASE_URL}/api/getRecentBoetesPublic`);
+            const fines = await response.json();
+            const table = document.getElementById('recentFinesTable');
+            table.innerHTML = '<tr><th>Speler</th><th>Datum</th><th>Bedrag</th><th>Reden</th></tr>';
+            fines.forEach(fine => {
+                table.innerHTML += `<tr>
+                    <td>${fine.speler}</td>
+                    <td>${fine.datum}</td>
+                    <td>€${fine.bedrag.toFixed(2)}</td>
+                    <td>${fine.reden}</td>
+                </tr>`;
+            });
+        }
+
+        // Fetch and display leaderboard
+        async function loadLeaderboard() {
+            const response = await fetch(`${API_BASE_URL}/api/getPlayerTotals`);
+            const players = await response.json();
+            players.sort((a, b) => b.totaal - a.totaal);
+            const topPlayers = players.slice(0, 5);
+            const list = document.getElementById('leaderboardList');
+            list.innerHTML = topPlayers.map((p, i) => `<li>${i + 1}. ${p.speler} - €${p.totaal.toFixed(2)}</li>`).join('');
+        }
+
+        // Fetch and populate reason dropdown
+        async function loadDropdownOptions() {
+            const response = await fetch(`${API_BASE_URL}/api/getDropdownOptions`);
+            const { redenen } = await response.json();
+            const select = document.getElementById('reason');
+            select.innerHTML = redenen.map(r => `<option value="${r}">${r}</option>`).join('');
+        }
+
+        // Add fine
+        document.getElementById('addFineForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const speler = document.getElementById('player').value;
+            const reden = document.getElementById('reason').value;
+            const bedrag = document.getElementById('amount').value;
+            const response = await fetch(`${API_BASE_URL}/api/addFine`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ speler, reden, bedrag }),
+            });
+            const result = await response.json();
+            alert(result.message);
+            // Refresh data
+            loadTotalFines();
+            loadRecentFines();
+            loadLeaderboard();
+            loadAllFines(1);
+            e.target.reset();
+        });
+
+        // Search player history
+        async function searchPlayer() {
+            const speler = document.getElementById('playerSearch').value;
+            const response = await fetch(`${API_BASE_URL}/api/getPlayerHistory?speler=${encodeURIComponent(speler)}`);
+            const history = await response.json();
+            const div = document.getElementById('playerHistory');
+            div.innerHTML = history.length ? history.map(f => `<p>${f.datum}: €${f.bedrag.toFixed(2)} - ${f.reden}</p>`).join('') : 'Geen boetes gevonden.';
+        }
+
+        // Load all fines with pagination
+        async function loadAllFines(page) {
+            const response = await fetch(`${API_BASE_URL}/api/getAllFines?page=${page}`);
+            const { fines, total } = await response.json();
+            const table = document.getElementById('allFinesTable');
+            table.innerHTML = '<tr><th>Speler</th><th>Datum</th><th>Bedrag</th><th>Reden</th><th>Actie</th></tr>';
+            fines.forEach(fine => {
+                table.innerHTML += `<tr>
+                    <td>${fine.speler}</td>
+                    <td>${fine.datum}</td>
+                    <td>€${fine.bedrag.toFixed(2)}</td>
+                    <td>${fine.reden}</td>
+                    <td><button class="btn btn-red" onclick="deleteFine(${fine.row})">Verwijder</button></td>
+                </tr>`;
+            });
+            // Pagination
+            const totalPages = Math.ceil(total / 10);
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                pagination.innerHTML += `<button class="pagination-btn ${i === page ? 'active' : ''}" onclick="loadAllFines(${i})">${i}</button>`;
+            }
+        }
+
+        // Delete fine
+        async function deleteFine(row) {
+            if (confirm('Weet je zeker dat je deze boete wilt verwijderen?')) {
+                const response = await fetch(`${API_BASE_URL}/api/deleteFine`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ row }),
+                });
+                const result = await response.json();
+                alert(result.message);
+                // Refresh data
+                loadTotalFines();
+                loadRecentFines();
+                loadLeaderboard();
+                loadAllFines(1);
+            }
+        }
+    </script>
+</body>
 </html>
